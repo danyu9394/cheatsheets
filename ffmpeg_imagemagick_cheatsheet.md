@@ -23,8 +23,13 @@ find . -type f -name "*.avi" -exec sh -c 'ffmpeg -n -i "$1" -vf "select=eq(n\,1)
 ##      xdpyinfo                # display information utility for X
 ## ffmepg flags:
 ##      -f fmt                  # force format
+##      -r rate                 # -r 30: 30fps
 ##      -s size                 # set frame size
-ffmpeg -f x11grab -s $(xdpyinfo | grep dimensions | awk '{print $2;}') -i :0.0 out.mkv
+##      -i :0.0                 # your current screen
+##      -f alsa -i default      # record sound
+##      -c:v libx264            # video codec      
+##      -c:a flac               # audio codec
+ffmpeg -f x11grab -s $(xdpyinfo | grep dimensions | awk '{print $2;}') -i :0.0 -f alsa -i default -c:v libx264 -r 30 -c:a flac out.mkv
 ####################################################################
 #  crop the video start point 03sec and last 24sec from that
 ## crop video to 1080p on the right side screen
