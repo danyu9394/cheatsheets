@@ -99,6 +99,28 @@ ffmpeg -i activity.mp4 -i mobile.mp4 -filter_complex \
 ##                              # `+` means OR, `*` means AND
 ##      -vframes number         # set the number of video frames to output
 find . -type f -name "*.avi" -exec sh -c 'ffmpeg -n -i "$1" -vf "select=eq(n\,1)" -vframes 1 "${1%.avi}.jpg"' sh {} \;
+####################################################################
+# add text in the middle at different time intervals of a video on Windows
+## - add this following line for fade in and fade out
+##      fade=t=in:start_time=0:d=0.5:alpha=1,fade=t=out:start_time=6.0:d=0.5:alpha=1[fg];\
+## 
+## - add this following line for draw box for subtitle
+## 	drawbox=y=(h-text_h)/2:color=black@0.4:width=iw:height=48:t=fill, \
+##
+ffmpeg -i in.mp4 -filter_complex \
+    "drawtext=fontfile=/Windows\Fonts\ariel.ttf:text='Day light at 4500K, 2lux':\
+    x=(w-text_w)/2:y=(h-text_h)/2:fontsize=40:fontcolor=white:enable='between(t,0,5)',\
+    drawtext=fontfile=/Windows\Fonts\ariel.ttf:text='Custom Fluorescent (Ultralume 30) at 3000K, 1060lux':\
+    x=(w-text_w)/2:y=(h-text_h)/2:fontsize=40:fontcolor=white:enable='between(t,6,13)',\
+    drawtext=fontfile=/Windows\Fonts\ariel.ttf:text='Illuminant A (Incandescent) at 2856K, 1780lux':\
+    x=(w-text_w)/2:y=(h-text_h)/2:fontsize=40:fontcolor=white:enable='between(t,14,26)',\
+    drawtext=fontfile=/Windows\Fonts\ariel.ttf:text='Cool White Fluorescent (CWF) at 4150K, 730lux':\
+    x=(w-text_w)/2:y=(h-text_h)/2:fontsize=40:fontcolor=white:enable='between(t,27,34)',\
+    drawtext=fontfile=/Windows\Fonts\ariel.ttf:text='Simulated Daylight (D50) at 5000K, 155lux':\
+    x=(w-text_w)/2:y=(h-text_h)/2:fontsize=40:fontcolor=white:enable='between(t,35,43)',\
+    drawtext=fontfile=/Windows\Fonts\ariel.ttf:text='Ultraviolet (UV), 4lux':\
+    x=(w-text_w)/2:y=(h-text_h)/2:fontsize=40:fontcolor=white:enable='between(t,44,48)' [fg];\
+    [0][fg]overlay=format=auto,format=yuv420p" -c:a copy out.mp4
 ```
 ###  2.2. <a name='audio'></a>audio
 ```sh
